@@ -9,7 +9,7 @@ import { mat4, Matrix4, Vector3 } from "../math";
 
 export class Camera extends Object3D {
 
-	// 投影矩阵，试图变换
+	// 投影矩阵，视图变换
 	projectionMatrix: Matrix4 = mat4();
 
 	constructor() {

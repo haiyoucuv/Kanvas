@@ -1,10 +1,11 @@
 {
   "name": "kanvas",
-  "version": "0.0.51",
+  "version": "0.0.1",
   "main": "dist/Kanvas.js",
+  "module": "dist/Kanvas.module.js",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development rollup -c rollup.dev.mjs -w",
+    "dev": "rollup -c rollup.dev.mjs -w",
     "buildTest": "rollup -c rollup.prod.js",
     "build": "node ./script/build.js"
   },
