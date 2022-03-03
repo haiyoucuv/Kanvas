@@ -9,6 +9,9 @@
     "buildTest": "rollup -c rollup.prod.js",
     "build": "node ./script/build.js"
   },
+  "repository": {
+    "url": "https://github.com/haiyoucuv/Kanvas"
+  },
   "dependencies": {
     "@types/dat.gui": "^0.7.7",
     "access": "^1.0.2",
