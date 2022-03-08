@@ -6,16 +6,22 @@
 
 
 import { PerspectiveCamera } from "./Camera/PerspectiveCamera";
+import { Object3D } from "./core/Object3D";
+import { Scene } from "./core/Scene";
 import { color, mat4, Matrix4, v3 } from "./math";
 import Shader from "./Shader/Shader";
-import phongVs from "./shaders/phong.vert";
-import phongFs from "./shaders/phong.frag";
-import pbrVs from "./shaders/pbr.vert";
-import pbrFs from "./shaders/pbr.frag";
+import { Texture } from "./Shader/Texture";
+import { RES } from "./Tools/RES";
 import { getBox, getSphere } from "./utils";
 
-const { indices, vertices, normals, uvs } = getSphere(0.5, 200, 200);
-// const { indices, vertices, normals } = getBox();
+import {
+	phongVert, phongFrag,
+	pbrVert, pbrFrag,
+	blinnPhongVert, blinnPhongFrag,
+} from "./shaders";
+
+const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
+// const { indices, vertices, normals, uvs } = getBox();
 
 const { innerWidth: winW, innerHeight: winH, devicePixelRatio: dip = 1 } = window;
 
@@ -34,33 +40,37 @@ function initGL() {
 
 	gl = canvas.getContext("webgl");
 
+	gl.getExtension("OES_standard_derivatives");
+
 	gl.viewport(0, 0, viewW, viewH);
 
 	gl.enable(gl.CULL_FACE); // 剔除背面
 	gl.enable(gl.DEPTH_TEST);
-
 	gl.enable(gl.BLEND);
-	gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 	gl.clearColor(0.2, 0.2, 0.2, 1);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-const viewPos = v3(0, 1, -3);
 const lightPos = v3(0, 0, -1);
 const lightColor = color();
 const albedoColor = color(1.00, 0.86, 0.57).setHex(0x0095eb);
 
-const model = mat4();
-
 const camera = new PerspectiveCamera(60, winW / winH, 1, 1000);
-camera.worldMatrix.setTranslate(lightPos.x, lightPos.y, lightPos.z);
-camera.worldMatrix.setLookAt(viewPos, v3(), v3(0, 1, 0));
+camera.position.set(0, 0, -5);
+// camera.rotationX = 90;
+// camera.rotationY = 90;
+camera.lookUp(v3());
 
+const model = new Object3D();
+const scene = new Scene();
+scene.add(model);
 
 async function initScene() {
-	shader = new Shader(gl, pbrVs, pbrFs);
-	// const shader = new Shader(gl, phongVs, phongFs);
+	shader = new Shader(gl, pbrVert, pbrFrag);
+	// shader = new Shader(gl, phongVert, phongFrag);
+	// shader = new Shader(gl, blinnPhongVert, blinnPhongFrag);
 
 	shader.use();
 
@@ -79,31 +89,58 @@ async function initScene() {
 	shader.uniforms.ao = 1.0;
 	shader.uniforms.albedo = albedoColor.toArray();
 
+	const basecolor = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_basecolor.png");
+	const normal = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_normal.png");
+	const metallic = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_metallic.png");
+	const roughness = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_roughness.png");
+
+	gl.activeTexture(gl.TEXTURE0);
+	const basecolorTexture = new Texture(gl, basecolor).bind();
+
+	gl.activeTexture(gl.TEXTURE1);
+	const normalTexture = new Texture(gl, normal).bind();
+
+	gl.activeTexture(gl.TEXTURE2);
+	const metallicTexture = new Texture(gl, metallic).bind();
+
+	gl.activeTexture(gl.TEXTURE3);
+	const roughnessTexture = new Texture(gl, roughness).bind();
+
+	shader.uniforms.u_texture = 0;
+	shader.uniforms.albedoMap = 0;
+	shader.uniforms.normalMap = 1;
+	shader.uniforms.metallicMap = 2;
+	shader.uniforms.roughnessMap = 3;
+
 	loop();
 }
 
 function loop() {
 	requestAnimationFrame(loop);
 
+	camera._update();
+	scene._update();
+
 	const vp = mat4().multiplyMatrices(camera.projectionMatrix, camera.worldMatrix);
 
 	shader.uniforms.vp = vp.toArray();
 
-	shader.uniforms.viewPos = viewPos.toArray();
+	shader.uniforms.viewPos = camera.position.toArray();
 
 	shader.uniforms.lightPos = lightPos.toArray();
 	shader.uniforms.lightColor = lightColor.toArray();
 
-	// model.rotate(0.2, 1, 1, 1);
-	shader.uniforms.model = model.toArray();
+	model.rotationY += 0.0001;
+	shader.uniforms.model = model.worldMatrix.toArray();
 
-	const normalMat = model.clone().invert().transpose();
+	const normalMat = model.worldMatrix.clone().invert().transpose();
 	shader.uniforms.normalMat = normalMat.toArray();
 
 	shader.uniforms.color = color(1, 1, 1).toArray();
 
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
 }
 
 initGL();
@@ -144,6 +181,6 @@ lightPosGui.add(param.lightPos, "x", -5, 5, 0.1).onChange((e) => {
 lightPosGui.add(param.lightPos, "y", -5, 5, 0.1).onChange((e) => {
 	lightPos.y = e;
 });
-lightPosGui.add(param.lightPos, "z", -5, -1, 0.1).onChange((e) => {
+lightPosGui.add(param.lightPos, "z", -5, 5, 0.1).onChange((e) => {
 	lightPos.z = e;
 });

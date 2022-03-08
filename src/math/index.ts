@@ -3,6 +3,7 @@
  * Copyright © 2020 haiyoucuv. All rights reserved.
  */
 
+export * from './utils';
 export * from './Box3';
 export * from './Color';
 export * from './Euler';
@@ -14,3 +15,4 @@ export * from './Ray';
 export * from './Sphere';
 export * from './Vector2';
 export * from './Vector3';
+

@@ -1,5 +1,5 @@
 import { Vector3 } from './Vector3';
-import { clamp } from "../utils";
+import { clamp } from "./utils";
 
 export class Quaternion {
     private _x: number

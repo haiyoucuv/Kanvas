@@ -5,15 +5,14 @@
  */
 
 import json from "@rollup/plugin-json";
-import resolve from '@rollup/plugin-node-resolve';
 import typescript from "@rollup/plugin-typescript";
-import commonjs from "rollup-plugin-commonjs";
 import livereload from "rollup-plugin-livereload";
 import progress from "rollup-plugin-progress";
 import replace from "rollup-plugin-replace";
 import serve from "rollup-plugin-serve";
-import glslify from 'rollup-plugin-glslify';
-import {default as glslOptimize} from 'rollup-plugin-glsl-optimize';
+// import { glslLoader } from "./glslLoader.mjs";
+import  glslLoader from "rollup-plugin-glsl-loader";
+
 
 export default {
 	input: "src/index.ts",
@@ -43,14 +42,17 @@ export default {
 			ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
 		}),
 		// resolve(),
-		typescript({ tsconfig:"./tsconfig.json" }),
+		typescript({ tsconfig: "./tsconfig.json" }),
 		// commonjs(),
 		json(),
-		// glslify(),
-		glslOptimize({
-			optimize: false,
+		glslLoader({
 			glslify: true,
 		}),
+		// glslify(),
+		// glslOptimize({
+		// 	optimize: false,
+		// 	glslify: true,
+		// }),
 		serve({
 			port: 8081,
 			headers: {

@@ -851,6 +851,11 @@ rollup-plugin-commonjs@^10.1.0:
     resolve "^1.11.0"
     rollup-pluginutils "^2.8.1"
 
+rollup-plugin-glsl-loader@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.npmjs.org/rollup-plugin-glsl-loader/-/rollup-plugin-glsl-loader-1.0.12.tgz#8f23754d2d6ba36b7ec21c7eeebf3720ffd341e2"
+  integrity sha512-gcjPddVJiqa5S8L3houDWJAjS+hbiK+abo6tlWAvzDlY96PItydxXfXNBfxeuJ2UezCxexL3RiwXtCeIsohbLg==
+
 rollup-plugin-glsl-optimize@^1.0.4:
   version "1.0.4"
   resolved "http://npm.dui88.com:80/rollup-plugin-glsl-optimize/-/rollup-plugin-glsl-optimize-1.0.4.tgz#5e2380884c863443683eb44f2587a155ccbb6e8c"

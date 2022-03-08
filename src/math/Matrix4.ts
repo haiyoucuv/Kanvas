@@ -2,6 +2,7 @@ import { Vector3 } from "./Vector3";
 import { Quaternion } from "./Quaternion";
 
 export class Matrix4 {
+
     public elements: Float32Array
 
     public readonly isMatrix4: true;

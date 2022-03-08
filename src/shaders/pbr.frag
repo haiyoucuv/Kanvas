@@ -1,30 +1,41 @@
 precision mediump float;
 
+#extension GL_OES_standard_derivatives : enable
+
 varying vec3 v_normal;
 varying vec3 v_pos;
 varying vec2 v_uv;
 
-uniform float alpha;        // 透明度
+uniform float alpha;// 透明度
 
-uniform vec3 lightColor;    // 光照颜色
-uniform vec3 lightPos;      // 光照方向
+uniform vec3 lightColor;// 光照颜色
+uniform vec3 lightPos;// 光照方向
 
-uniform vec3 viewPos;       // 摄像机位置
+uniform vec3 viewPos;// 摄像机位置
 
-uniform vec3 albedo;        // 颜色反照率
-uniform float metallic;     // 金属性
-uniform float roughness;    // 粗糙度
+uniform vec3 albedo;// 颜色反照率
+uniform float metallic;// 金属性
+uniform float roughness;// 粗糙度
 uniform float ao;
+
+uniform sampler2D albedoMap;
+uniform sampler2D normalMap;
+uniform sampler2D metallicMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D aoMap;
 
 const float PI = 3.14159265359;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+//    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+
+    float fresnel = exp2( ( -5.55473 * cosTheta - 6.98316 ) * cosTheta );
+    return ( 1.0 - F0 ) * fresnel + F0;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
-    float a      = roughness*roughness;
-    float a2     = a*a;
+    float a      = roughness * roughness;
+    float a2     = a * a;
     float NdotH  = max(dot(N, H), 0.0);
     float NdotH2 = NdotH*NdotH;
 
@@ -54,14 +65,34 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return ggx1 * ggx2;
 }
 
+vec3 getNormalFromMap() {
+    vec3 tangentNormal = texture2D(normalMap, v_uv).rgb * 2.0 - 1.0;
+
+    vec3 Q1  = dFdx(v_pos);
+    vec3 Q2  = dFdy(v_pos);
+    vec2 st1 = dFdx(v_uv);
+    vec2 st2 = dFdy(v_uv);
+
+    vec3 N  = normalize(v_normal);
+    vec3 T  = normalize(Q1 * st2.t - Q2 * st1.t);
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 void main(){
+    vec3 baseColor = texture2D(albedoMap, v_uv).rgb;
+    vec3 albedo = pow(baseColor, vec3(2.2));
 
-    float roughness = clamp( roughness, 0.04, 1.0 );    // 处理粗糙度边界范围
+    // float roughness = clamp(roughness, 0.04, 1.0);// 处理粗糙度边界范围
+    float roughness = texture2D(roughnessMap, v_uv).r;
+    float metallic = texture2D(metallicMap, v_uv).r;
 
-    // vec3 N = normalize(v_normal);
 
     // 在顶点着色器已经归一化
-    vec3 N = v_normal;
+    vec3 N = getNormalFromMap();
+    // vec3 N = normalize(v_normal);
     vec3 V = normalize(viewPos - v_pos);
 
     // 垂直反射率F0
@@ -117,5 +148,5 @@ void main(){
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, alpha);
 }

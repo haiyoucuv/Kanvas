@@ -1,7 +1,7 @@
 import { Quaternion } from './Quaternion';
 import { Vector3 } from './Vector3';
 import { Matrix4 } from './Matrix4';
-import { clamp } from "../utils";
+import { clamp } from "./utils";
 
 export enum RotationOrders {
     XYZ = "XYZ",

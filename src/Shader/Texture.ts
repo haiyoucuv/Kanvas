@@ -38,6 +38,7 @@ export class Texture {
 
 	bind() {
 		this.gl.bindTexture(this.gl.TEXTURE_2D, this._glTexture);
+		return this;
 	}
 
 }

@@ -31,11 +31,10 @@ void main(){
 
     // 计算镜面反射
     vec3 viewDir = normalize(viewPos - v_pos);// 计算观察方向向量
-    vec3 reflectDir = reflect(-lightDir, v_normal);// 计算反射方向向量
-
+    vec3 halfwayDir = normalize(lightDir + viewDir);    // 半程向量
     // 计算镜面分量
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
-    vec3 specular = specularStrength * spec * color;
+    float spec = pow(max(dot(v_normal, halfwayDir), 0.0), 32.0);
+    vec3 specular = vec3(specularStrength) * spec;
 
     // 计算最终颜色
     gl_FragColor = vec4(ambient + diffuse + specular, alpha);
