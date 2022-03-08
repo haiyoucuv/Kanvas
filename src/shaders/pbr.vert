@@ -21,6 +21,6 @@ void main(){
     v_uv = uv;
 
     // 光线和法向量关系
-    v_normal = mat3(normalMat) * normal;// 归一化
+    v_normal = mat3(normalMat) * normal;
 
 }
