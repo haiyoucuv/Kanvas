@@ -20,8 +20,8 @@ import {
 	blinnPhongVert, blinnPhongFrag,
 } from "./shaders";
 
-const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
-// const { indices, vertices, normals, uvs } = getBox();
+// const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
+const { indices, vertices, normals, uvs } = getBox();
 
 const { innerWidth: winW, innerHeight: winH, devicePixelRatio: dip = 1 } = window;
 
