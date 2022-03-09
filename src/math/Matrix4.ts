@@ -3,28 +3,22 @@ import { Quaternion } from "./Quaternion";
 
 export class Matrix4 {
 
-    public elements: Float32Array
+    public elements: number[]
 
     public readonly isMatrix4: true;
 
     constructor(
-        m00: number | Float32Array | number[] = 1, m01: number = 0, m02: number = 0, m03: number = 0,
-        m10: number = 0, m11: number = 1, m12: number = 0, m13: number = 0,
-        m20: number = 0, m21: number = 0, m22: number = 1, m23: number = 0,
-        m30: number = 0, m31: number = 0, m32: number = 0, m33: number = 1
+	    m00: number = 1, m01: number = 0, m02: number = 0, m03: number = 0,
+	    m10: number = 0, m11: number = 1, m12: number = 0, m13: number = 0,
+	    m20: number = 0, m21: number = 0, m22: number = 1, m23: number = 0,
+	    m30: number = 0, m31: number = 0, m32: number = 0, m33: number = 1
     ) {
-        if (m00 instanceof Float32Array) {
-            this.elements = m00;
-        } else if (Array.isArray(m00)) {
-            this.elements = new Float32Array(m00);
-        } else {
-            this.elements = new Float32Array([
-                m00, m01, m02, m03,
-                m10, m11, m12, m13,
-                m20, m21, m22, m23,
-                m30, m31, m32, m33
-            ]);
-        }
+	    this.elements = [
+		    m00, m01, m02, m03,
+		    m10, m11, m12, m13,
+		    m20, m21, m22, m23,
+		    m30, m31, m32, m33
+	    ];
         // this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
     }
 
@@ -1147,7 +1141,7 @@ export class Matrix4 {
  * @returns {Matrix4}
  */
 export function mat4(
-    m00: number | Float32Array | number[] = 1, m01: number = 0, m02: number = 0, m03: number = 0,
+    m00: number = 1, m01: number = 0, m02: number = 0, m03: number = 0,
     m10: number = 0, m11: number = 1, m12: number = 0, m13: number = 0,
     m20: number = 0, m21: number = 0, m22: number = 1, m23: number = 0,
     m30: number = 0, m31: number = 0, m32: number = 0, m33: number = 1

@@ -148,7 +148,6 @@ export class Quaternion {
 
         const x = euler._x, y = euler._y, z = euler._z, order = euler.order;
 
-
         const cos = Math.cos;
         const sin = Math.sin;
 

@@ -20,18 +20,18 @@ import {
 	blinnPhongVert, blinnPhongFrag,
 } from "./shaders";
 
-// const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
-const { indices, vertices, normals, uvs } = getBox();
+const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
+// const { indices, vertices, normals, uvs } = getBox();
 
 const { innerWidth: winW, innerHeight: winH, devicePixelRatio: dip = 1 } = window;
+const viewW = winW * dip;
+const viewH = winH * dip;
 
 let gl: WebGLRenderingContext = null;
 let shader: Shader = null;
 
 function initGL() {
 	const canvas = document.createElement("canvas");
-	const viewW = winW * dip;
-	const viewH = winH * dip;
 	canvas.width = viewW;
 	canvas.height = viewH;
 	canvas.style.width = "100%";
@@ -53,15 +53,14 @@ function initGL() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-const lightPos = v3(0, 0, -1);
+const lightPos = v3(0, 0, 1);
 const lightColor = color();
 const albedoColor = color(1.00, 0.86, 0.57).setHex(0x0095eb);
 
-const camera = new PerspectiveCamera(60, winW / winH, 1, 1000);
-camera.position.set(0, 0, -5);
-// camera.rotationX = 90;
-// camera.rotationY = 90;
-camera.lookUp(v3());
+const camera = new PerspectiveCamera(60, viewW / viewH, 1, 1000);
+camera.position.set(1, 0, 4);
+camera.updateWorldMatrix();
+camera.lookAt(v3());
 
 const model = new Object3D();
 const scene = new Scene();
@@ -118,10 +117,15 @@ async function initScene() {
 function loop() {
 	requestAnimationFrame(loop);
 
+	model.rotationY += 1;
+
 	camera._update();
 	scene._update();
 
-	const vp = mat4().multiplyMatrices(camera.projectionMatrix, camera.worldMatrix);
+	const vp = mat4().multiplyMatrices(
+		camera.projectionMatrix,
+		camera.worldMatrix.clone().invert()
+	);
 
 	shader.uniforms.vp = vp.toArray();
 
@@ -130,7 +134,6 @@ function loop() {
 	shader.uniforms.lightPos = lightPos.toArray();
 	shader.uniforms.lightColor = lightColor.toArray();
 
-	model.rotationY += 0.0001;
 	shader.uniforms.model = model.worldMatrix.toArray();
 
 	const normalMat = model.worldMatrix.clone().invert().transpose();

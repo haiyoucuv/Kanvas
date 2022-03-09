@@ -89,16 +89,14 @@ export class Euler {
 
     }
 
-    setFromRotationMatrix(m: Matrix4, order: RotationOrders, update = true) {
-        // const clamp = _Math.clamp;
-        // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+    setFromRotationMatrix(m: Matrix4, order: RotationOrders = this._order, update = true) {
+	    // const clamp = _Math.clamp;
+	    // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
-        const te = m.elements;
-        const m11 = te[0], m12 = te[4], m13 = te[8];
-        const m21 = te[1], m22 = te[5], m23 = te[9];
-        const m31 = te[2], m32 = te[6], m33 = te[10];
-
-        order = order || this._order;
+	    const te = m.elements;
+	    const m11 = te[0], m12 = te[4], m13 = te[8];
+	    const m21 = te[1], m22 = te[5], m23 = te[9];
+	    const m31 = te[2], m32 = te[6], m33 = te[10];
 
         if (order === 'XYZ') {
 
@@ -209,7 +207,7 @@ export class Euler {
         return this;
     }
 
-    setFromQuaternion(q: Quaternion, order, update = true) {
+    setFromQuaternion(q: Quaternion, order = this._order, update = true) {
 
         const matrix = new Matrix4();
 

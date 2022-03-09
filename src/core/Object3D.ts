@@ -11,7 +11,7 @@ export class Object3D {
 	position: Vector3 = v3();
 	scale: Vector3 = v3(1, 1, 1);
 	rotation: Euler = euler();
-	private readonly quaternion: Quaternion = quat().setFromEuler(this.rotation);
+	readonly quaternion: Quaternion = quat().setFromEuler(this.rotation);
 
 	// 矩阵
 	worldMatrix: Matrix4 = mat4();
@@ -19,6 +19,20 @@ export class Object3D {
 
 	parent: Object3D = null;
 	children: Object3D[] = [];
+
+	constructor() {
+		this.quaternion.onChange(this.onQuaternionChange);
+		this.rotation.onChange(this.onRotationChange);
+	}
+
+	onQuaternionChange = () => {
+		this.rotation.setFromQuaternion(this.quaternion, void 0, false);
+	}
+
+	onRotationChange = () => {
+		this.quaternion.setFromEuler(this.rotation, false);
+	}
+
 
 	add<T extends Object3D>(object: T): T {
 
@@ -51,10 +65,8 @@ export class Object3D {
 			localMatrix,
 			position,
 			quaternion,
-			rotation,
 			scale,
 		} = this;
-		quaternion.setFromEuler(rotation, true);
 		localMatrix.compose(position, quaternion, scale);
 	}
 
@@ -68,7 +80,7 @@ export class Object3D {
 		} = this;
 
 		if (parent) {
-			worldMatrix.multiplyMatrices(this.parent.worldMatrix, localMatrix);
+			worldMatrix.multiplyMatrices(parent.worldMatrix, localMatrix);
 		} else {
 			worldMatrix.copy(localMatrix);
 		}
@@ -92,18 +104,19 @@ export class Object3D {
 		}
 	}
 
-	lookUp(target: Vector3) {
+	lookAt(target: Vector3) {
 		this.updateWorldMatrix();
 
-		const position = v3().setFromMatrixPosition(this.worldMatrix);
+		const mat4 = new Matrix4();
 
 		if (this["isCamera"]) {
-			this.worldMatrix.lookAt(position, target, Vector3.UP);
+			mat4.lookAt(this.position, target, Vector3.UP);
 		} else {
-			this.worldMatrix.lookAt(target, position, Vector3.UP);
+			mat4.lookAt(target, this.position, Vector3.UP);
 		}
-		this.quaternion.setFromRotationMatrix(this.worldMatrix);
-		this.rotation.setFromQuaternion(this.quaternion, undefined, false);
+
+		this.quaternion.setFromRotationMatrix(mat4);
+
 	}
 
 
@@ -161,6 +174,7 @@ export class Object3D {
 
 	set rotationX(v: number) {
 		this.rotation.x = deg2Rad(v);
+		// this.rotation.x = v;
 	}
 
 	get rotationY() {
@@ -169,6 +183,7 @@ export class Object3D {
 
 	set rotationY(v: number) {
 		this.rotation.y = deg2Rad(v);
+		// this.rotation.y = v;
 	}
 
 	get rotationZ() {
@@ -177,6 +192,7 @@ export class Object3D {
 
 	set rotationZ(v: number) {
 		this.rotation.z = deg2Rad(v);
+		// this.rotation.z = v;
 	}
 
 
