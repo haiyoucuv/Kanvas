@@ -27,10 +27,10 @@ uniform sampler2D aoMap;
 const float PI = 3.14159265359;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-//    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 
-    float fresnel = exp2( ( -5.55473 * cosTheta - 6.98316 ) * cosTheta );
-    return ( 1.0 - F0 ) * fresnel + F0;
+//    float fresnel = exp2( ( -5.55473 * cosTheta - 6.98316 ) * cosTheta );
+//    return ( 1.0 - F0 ) * fresnel + F0;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
