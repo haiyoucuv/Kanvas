@@ -4,6 +4,9 @@
  * Copyright © 2022 haiyoucuv. All rights reserved.
  */
 
-class Material {
+import { color, Color } from "../math";
+
+export class Material {
 	alpha: number = 1;
+	color: Color = color();
 }

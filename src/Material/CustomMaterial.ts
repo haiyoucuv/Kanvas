@@ -4,6 +4,8 @@
  * Copyright © 2022 haiyoucuv. All rights reserved.
  */
 
+import { Material } from "./Material";
+
 export class CustomMaterial extends Material {
 
 }
