@@ -282,7 +282,7 @@ export class Matrix4 {
 
         s = other.elements;
         d = this.elements;
-        inv = new Float32Array(16);
+        inv = [];
 
         inv[0] = s[5] * s[10] * s[15] - s[5] * s[11] * s[14] - s[9] * s[6] * s[15]
             + s[9] * s[7] * s[14] + s[13] * s[6] * s[11] - s[13] * s[7] * s[10];

@@ -6,13 +6,17 @@
 
 
 import { PerspectiveCamera } from "./Camera/PerspectiveCamera";
+import { Mesh3D } from "./core/Mesh3D";
 import { Object3D } from "./core/Object3D";
 import { Scene } from "./core/Scene";
+import { WebGLRender } from "./core/WebGLRender";
+import { BoxGeometry } from "./Geometry/BoxGeometry";
+import { SphereGeometry } from "./Geometry/SphereGeometry";
+import { PbrMaterial } from "./Material/PbrMaterial";
 import { color, mat4, Matrix4, v3 } from "./math";
 import Shader from "./Shader/Shader";
 import { Texture } from "./Shader/Texture";
 import { RES } from "./Tools/RES";
-import { getBox, getSphere } from "./utils";
 
 import {
 	phongVert, phongFrag,
@@ -20,38 +24,33 @@ import {
 	blinnPhongVert, blinnPhongFrag,
 } from "./shaders";
 
-const { indices, vertices, normals, uvs } = getSphere(0.5, 30, 30);
-// const { indices, vertices, normals, uvs } = getBox();
+const { indices, vertices, normals, uvs } = new SphereGeometry(0.5, 30, 30);
+// const { indices, vertices, normals, uvs } = new BoxGeometry();
 
 const { innerWidth: winW, innerHeight: winH, devicePixelRatio: dip = 1 } = window;
 const viewW = winW * dip;
 const viewH = winH * dip;
 
+const canvas = document.createElement("canvas");
+canvas.width = viewW;
+canvas.height = viewH;
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+document.body.appendChild(canvas);
+
 let gl: WebGLRenderingContext = null;
 let shader: Shader = null;
 
-function initGL() {
-	const canvas = document.createElement("canvas");
-	canvas.width = viewW;
-	canvas.height = viewH;
-	canvas.style.width = "100%";
-	canvas.style.height = "100%";
-	document.body.appendChild(canvas);
+gl = new WebGLRender(canvas).gl;
 
-	gl = canvas.getContext("webgl");
+WebGLRender.gl = gl;
 
-	gl.getExtension("OES_standard_derivatives");
+const material = new PbrMaterial();
 
-	gl.viewport(0, 0, viewW, viewH);
-
-	gl.enable(gl.CULL_FACE); // 剔除背面
-	gl.enable(gl.DEPTH_TEST);
-	gl.enable(gl.BLEND);
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-	gl.clearColor(0.2, 0.2, 0.2, 1);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-}
+const mesh = new Mesh3D(
+	new SphereGeometry(0.5, 30, 30),
+	material,
+);
 
 const lightPos = v3(0, 0, 1);
 const lightColor = color();
@@ -66,6 +65,7 @@ const model = new Object3D();
 const scene = new Scene();
 scene.add(model);
 
+
 async function initScene() {
 	shader = new Shader(gl, pbrVert, pbrFrag);
 	// shader = new Shader(gl, phongVert, phongFrag);
@@ -73,13 +73,13 @@ async function initScene() {
 
 	shader.use();
 
-	shader.attributes.pos.bind(new Float32Array(vertices)).pointer();
-	shader.attributes.normal.bind(new Float32Array(normals)).pointer();
-	shader.attributes.uv.bind(new Float32Array(uvs)).pointer();
+	shader.attributes.pos.bind(vertices).pointer();
+	shader.attributes.normal.bind(normals).pointer();
+	shader.attributes.uv.bind(uvs).pointer();
 
 	const indexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
 	shader.uniforms.alpha = 1;
 
@@ -88,10 +88,10 @@ async function initScene() {
 	shader.uniforms.ao = 1.0;
 	shader.uniforms.albedo = albedoColor.toArray();
 
-	const basecolor = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_basecolor.png");
-	const normal = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_normal.png");
-	const metallic = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_metallic.png");
-	const roughness = await RES.loadImage("./assets/rustediron1-alt2-bl/rustediron2_roughness.png");
+	const basecolor = await RES.loadImage("./assets/rustediron1/albedo.png");
+	const normal = await RES.loadImage("./assets/rustediron1/normal.png");
+	const metallic = await RES.loadImage("./assets/rustediron1/metallic.png");
+	const roughness = await RES.loadImage("./assets/rustediron1/roughness.png");
 
 	gl.activeTexture(gl.TEXTURE0);
 	const basecolorTexture = new Texture(gl, basecolor).bind();
@@ -106,7 +106,7 @@ async function initScene() {
 	const roughnessTexture = new Texture(gl, roughness).bind();
 
 	shader.uniforms.u_texture = 0;
-	shader.uniforms.albedoMap = 0;
+	shader.uniforms.map = 0;
 	shader.uniforms.normalMap = 1;
 	shader.uniforms.metallicMap = 2;
 	shader.uniforms.roughnessMap = 3;
@@ -122,10 +122,7 @@ function loop() {
 	camera._update();
 	scene._update();
 
-	const vp = mat4().multiplyMatrices(
-		camera.projectionMatrix,
-		camera.worldMatrix.clone().invert()
-	);
+	const vp = camera.projectionMatrix.clone().multiply(camera.worldMatrix.clone().invert());
 
 	shader.uniforms.vp = vp.toArray();
 
@@ -146,7 +143,6 @@ function loop() {
 
 }
 
-initGL();
 initScene();
 
 import { GUI } from 'dat.gui';

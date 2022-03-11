@@ -38,6 +38,8 @@ export default class Shader {
 
 	uniforms;
 
+	indexBuffer: WebGLBuffer = null;
+
 	constructor(gl: WebGLRenderingContext, vs: string, fs: string) {
 		this.gl = gl;
 		this.vs = vs;
@@ -50,6 +52,8 @@ export default class Shader {
 		this._uniformData = extractUniforms(gl, this.program);
 
 		this.uniforms = generateUniformAccessObject(gl, this._uniformData);
+
+		this.indexBuffer = gl.createBuffer();
 	}
 
 	/**

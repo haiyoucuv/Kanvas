@@ -36,7 +36,7 @@ export class Texture {
 		this._glTexture = createTexture(this.gl, image);
 	}
 
-	bind() {
+	bind(unit: GLenum = this.gl.TEXTURE0) {
 		this.gl.bindTexture(this.gl.TEXTURE_2D, this._glTexture);
 		return this;
 	}

@@ -18,7 +18,8 @@ uniform float metallic;// 金属性
 uniform float roughness;// 粗糙度
 uniform float ao;
 
-uniform sampler2D albedoMap;
+// 贴图
+uniform sampler2D map;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
@@ -27,10 +28,9 @@ uniform sampler2D aoMap;
 const float PI = 3.14159265359;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-
-//    float fresnel = exp2( ( -5.55473 * cosTheta - 6.98316 ) * cosTheta );
-//    return ( 1.0 - F0 ) * fresnel + F0;
+    // float fresnel = pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    float fresnel = exp2((-5.55473 * cosTheta - 6.98316) * cosTheta);
+    return F0 + (1.0 - F0) * fresnel;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -82,13 +82,13 @@ vec3 getNormalFromMap() {
 }
 
 void main(){
-    vec3 baseColor = texture2D(albedoMap, v_uv).rgb;
+    vec3 baseColor = texture2D(map, v_uv).rgb;
     vec3 albedo = pow(baseColor, vec3(2.2));
 
     // float roughness = clamp(roughness, 0.04, 1.0);// 处理粗糙度边界范围
     float roughness = texture2D(roughnessMap, v_uv).r;
     float metallic = texture2D(metallicMap, v_uv).r;
-
+    //    float ao = texture(aoMap, v_uv).r;
 
     // 在顶点着色器已经归一化
     vec3 N = getNormalFromMap();
