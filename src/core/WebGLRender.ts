@@ -131,6 +131,8 @@ export class WebGLRender {
 
 		const { material, geometry, worldMatrix } = obj;
 
+		if (!material.shader) material.initShader();
+
 		const shader = material.shader;
 		const { vertices, normals, uvs, colors, indices } = geometry;
 

@@ -49,10 +49,22 @@ async function initScene() {
 	const metallic = await RES.loadImage("./assets/rustediron1/metallic.png");
 	const roughness = await RES.loadImage("./assets/rustediron1/roughness.png");
 
+	const basecolor1 = await RES.loadImage("./assets/dented-metal/albedo.png");
+	const normal1 = await RES.loadImage("./assets/dented-metal/normal.png");
+	const metallic1 = await RES.loadImage("./assets/dented-metal/metallic.png");
+	const roughness1 = await RES.loadImage("./assets/dented-metal/roughness.png");
+	const ao1 = await RES.loadImage("./assets/dented-metal/ao.png");
+
 	const basecolorTexture = new Texture(basecolor);
 	const normalTexture = new Texture(normal);
 	const metallicTexture = new Texture(metallic);
 	const roughnessTexture = new Texture(roughness);
+
+	const basecolor1Texture = new Texture(basecolor1);
+	const normal1Texture = new Texture(normal1);
+	const metallic1Texture = new Texture(metallic1);
+	const roughness1Texture = new Texture(roughness1);
+	const ao1Texture = new Texture(ao1);
 
 	// 灯光
 	const pLight = new PointLight();
@@ -73,14 +85,16 @@ async function initScene() {
 	mesh2 = new Mesh3D(
 		new BoxGeometry(),
 		new PbrMaterial({
-			map: basecolorTexture,
-			normalMap: normalTexture,
-			metallicMap: metallicTexture,
-			roughnessMap: roughnessTexture,
+			map: basecolor1Texture,
+			normalMap: normal1Texture,
+			metallicMap: metallic1Texture,
+			roughnessMap: roughness1Texture,
+			aoMap: ao1Texture,
 		}),
 	);
 
-	mesh2.position.set(0.5, 0.5, 0.5);
+	mesh.position.set(-0.7, 0, 0);
+	mesh2.position.set(0.7, 0, 0);
 
 	scene.add(mesh);
 	scene.add(mesh2);
@@ -93,7 +107,7 @@ function loop() {
 	requestAnimationFrame(loop);
 
 	mesh.rotationY += 1;
-	mesh2.rotationY += 1;
+	mesh2.rotationY -= 1;
 
 	render.render(scene, camera);
 }

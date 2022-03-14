@@ -16,6 +16,6 @@ class PhongMaterial extends BasicMaterial {
 	}
 
 	initShader() {
-		this.shader = new Shader(WebGLRender.gl, phongVert, phongFrag);
+		this._shader = new Shader(WebGLRender.gl, phongVert, phongFrag);
 	}
 }

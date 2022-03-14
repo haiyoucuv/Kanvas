@@ -15,18 +15,17 @@ export interface IMaterialOptions {
 export class Material {
 	alpha: number = 1;
 	color: Color = new Color();
-	shader: Shader = null;
 
-	get uniforms() {
-		return this.shader.uniforms;
+	protected _shader: Shader = null;
+	get shader(): Shader {
+		return this._shader;
 	}
 
 	constructor(options?: IMaterialOptions) {
 
-		this.initShader();
-
 		this.alpha = (options?.alpha === void 0) ? 1 : options.alpha;
 		this.color = options?.color || color();
+
 	}
 
 	initShader() {

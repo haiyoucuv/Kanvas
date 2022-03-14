@@ -30,6 +30,7 @@ export class PbrMaterial extends BasicMaterial {
 	ao = 1.0;
 
 	constructor(options?: IPbrMaterialOptions) {
+
 		super(options);
 
 		this.normalMap = options?.normalMap;
@@ -40,7 +41,23 @@ export class PbrMaterial extends BasicMaterial {
 	}
 
 	initShader() {
-		this.shader = new Shader(WebGLRender.gl, pbrVert, pbrFrag);
+		let frag = pbrFrag;
+		if (this.map) {
+			frag = "#define USE_MAP\n" + frag;
+		}
+		if (this.normalMap) {
+			frag = "#define USE_NORMAL_MAP\n" + frag;
+		}
+		if (this.metallicMap) {
+			frag = "#define USE_METALLIC_MAP\n" + frag;
+		}
+		if (this.roughnessMap) {
+			frag = "#define USE_ROUGHNESS_MAP\n" + frag;
+		}
+		if (this.aoMap) {
+			frag = "#define USE_AO_MAP\n" + frag;
+		}
+		this._shader = new Shader(WebGLRender.gl, pbrVert, frag);
 	}
 
 }
