@@ -13,7 +13,7 @@ uniform vec3 lightPos;// 光照方向
 
 uniform vec3 viewPos;// 摄像机位置
 
-uniform vec3 albedo;// 颜色反照率
+uniform vec3 color;// 颜色反照率
 uniform float metallic;// 金属性
 uniform float roughness;// 粗糙度
 uniform float ao;
@@ -83,7 +83,7 @@ vec3 getNormalFromMap() {
 
 void main(){
     vec3 baseColor = texture2D(map, v_uv).rgb;
-    vec3 albedo = pow(baseColor, vec3(2.2));
+    vec3 color = pow(baseColor, vec3(2.2));
 
     // float roughness = clamp(roughness, 0.04, 1.0);// 处理粗糙度边界范围
     float roughness = texture2D(roughnessMap, v_uv).r;
@@ -99,7 +99,7 @@ void main(){
     // 0.04为非金属近似值
     // 根据金属度进行金属流程
     vec3 F0 = vec3(0.04);
-    F0 = mix(F0, albedo, metallic);
+    F0 = mix(F0, color, metallic);
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
@@ -135,18 +135,18 @@ void main(){
     float NdotL = max(dot(N, L), 0.0);
 
     // add to outgoing radiance Lo
-    Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    Lo += (kD * color / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 ambient = vec3(0.03) * color * ao;
 
-    vec3 color = ambient + Lo;
+    vec3 res = ambient + Lo;
 
     // HDR tonemapping
-    color = color / (color + vec3(1.0));
+    res = res / (res + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/2.2));
+    res = pow(res, vec3(1.0/2.2));
 
-    gl_FragColor = vec4(color, alpha);
+    gl_FragColor = vec4(res, alpha);
 }

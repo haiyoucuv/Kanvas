@@ -8,4 +8,12 @@ import { Material } from "./Material";
 
 export class CustomMaterial extends Material {
 
+	constructor() {
+		super();
+	}
+
+	initShader() {
+
+	}
+
 }

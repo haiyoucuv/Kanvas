@@ -11,11 +11,11 @@ import { BasicMaterial } from "./BasicMaterial";
 
 class PhongMaterial extends BasicMaterial {
 
-	// 在渲染器里，第一次编译的时候附值
-	static shader: Shader;
-
-	static initShader() {
-		PhongMaterial.shader = new Shader(WebGLRender.gl, phongVert, phongFrag);
+	constructor() {
+		super();
 	}
 
+	initShader() {
+		this.shader = new Shader(WebGLRender.gl, phongVert, phongFrag);
+	}
 }

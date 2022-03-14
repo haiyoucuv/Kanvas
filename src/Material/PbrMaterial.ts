@@ -5,23 +5,42 @@
  */
 
 import { WebGLRender } from "../core/WebGLRender";
+import { color } from "../math";
 import Shader from "../Shader/Shader";
 import { Texture } from "../Shader/Texture";
 import { pbrFrag, pbrVert } from "../shaders";
-import { BasicMaterial } from "./BasicMaterial";
+import { BasicMaterial, IBasicMaterialOptions } from "./BasicMaterial";
+
+export interface IPbrMaterialOptions extends IBasicMaterialOptions {
+	normalMap?: Texture,
+	metallicMap?: Texture,
+	roughnessMap?: Texture,
+	aoMap?: Texture,
+}
 
 export class PbrMaterial extends BasicMaterial {
-	// 在渲染器里，第一次编译的时候附值
-	static shader: Shader;
-
-	static initShader() {
-		PbrMaterial.shader = new Shader(WebGLRender.gl, pbrVert, pbrFrag);
-	}
 
 	normalMap: Texture;
 	metallicMap: Texture;
 	roughnessMap: Texture;
 	aoMap: Texture;
 
+	metallic = 0.5;
+	roughness = 0.5;
+	ao = 1.0;
+
+	constructor(options?: IPbrMaterialOptions) {
+		super(options);
+
+		this.normalMap = options?.normalMap;
+		this.metallicMap = options?.metallicMap;
+		this.roughnessMap = options?.roughnessMap;
+		this.aoMap = options?.aoMap;
+
+	}
+
+	initShader() {
+		this.shader = new Shader(WebGLRender.gl, pbrVert, pbrFrag);
+	}
 
 }

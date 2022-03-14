@@ -24,17 +24,20 @@ export default class Shader {
 	public fs: string;
 
 
-	private _program: WebGLProgram = null;
+	private readonly _program: WebGLProgram = null;
 	get program(): WebGLProgram {
 		return this._program;
 	}
 
-	private _attributes: { [key in string]: Attribute };
+	private readonly _attributes: { [key in string]: Attribute };
 	get attributes() {
 		return this._attributes;
 	}
 
-	private _uniformData;
+	private readonly _uniformData;
+	get uniformData() {
+		return this._uniformData;
+	}
 
 	uniforms;
 

@@ -4,6 +4,8 @@
  * Copyright © 2022 haiyoucuv. All rights reserved.
  */
 
+import { WebGLRender } from "../core/WebGLRender";
+
 export class Geometry {
 
 	vertices: Float32Array;
@@ -11,6 +13,11 @@ export class Geometry {
 	normals: Float32Array;
 	colors: Float32Array;
 	uvs: Float32Array;
+
+	_indexBuffer: WebGLBuffer;
+	get indexBuffer(): WebGLBuffer {
+		return this._indexBuffer;
+	}
 
 	constructor(
 		vertices: Float32Array,
@@ -27,6 +34,8 @@ export class Geometry {
 		this.uvs = uvs || new Float32Array(vertArrLen / 3 * 2);
 		// 默认白色
 		this.colors = colors || new Float32Array(new Array(vertArrLen).fill(1));
+
+		this._indexBuffer = WebGLRender.gl.createBuffer();
 	}
 
 }

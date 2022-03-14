@@ -4,6 +4,7 @@
  * Copyright © 2021 haiyoucuv. All rights reserved.
  */
 
+import { WebGLRender } from "../core/WebGLRender";
 import { createTexture } from "./glTools";
 
 export class Texture {
@@ -28,8 +29,8 @@ export class Texture {
 
 	private image: HTMLImageElement | HTMLCanvasElement;
 
-	constructor(gl: WebGLRenderingContext, image: HTMLImageElement | HTMLCanvasElement) {
-		this.gl = gl;
+	constructor(image: HTMLImageElement | HTMLCanvasElement) {
+		this.gl = WebGLRender.gl;
 		this.image = image;
 		this._width = image.width;
 		this._height = image.height;
@@ -37,6 +38,7 @@ export class Texture {
 	}
 
 	bind(unit: GLenum = this.gl.TEXTURE0) {
+		this.gl.activeTexture(unit);
 		this.gl.bindTexture(this.gl.TEXTURE_2D, this._glTexture);
 		return this;
 	}

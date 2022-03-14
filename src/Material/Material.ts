@@ -5,8 +5,31 @@
  */
 
 import { color, Color } from "../math";
+import Shader from "../Shader/Shader";
+
+export interface IMaterialOptions {
+	alpha?: number,
+	color?: Color,
+}
 
 export class Material {
 	alpha: number = 1;
-	color: Color = color();
+	color: Color = new Color();
+	shader: Shader = null;
+
+	get uniforms() {
+		return this.shader.uniforms;
+	}
+
+	constructor(options?: IMaterialOptions) {
+
+		this.initShader();
+
+		this.alpha = (options?.alpha === void 0) ? 1 : options.alpha;
+		this.color = options?.color || color();
+	}
+
+	initShader() {
+
+	}
 }

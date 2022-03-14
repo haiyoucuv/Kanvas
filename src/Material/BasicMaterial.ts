@@ -4,32 +4,25 @@
  * Copyright © 2022 haiyoucuv. All rights reserved.
  */
 
-import { color, Color } from "../math";
-import Shader from "../Shader/Shader";
 import { Texture } from "../Shader/Texture";
-import { Material } from "./Material";
+import { IMaterialOptions, Material } from "./Material";
+
+export interface IBasicMaterialOptions extends IMaterialOptions {
+	map?: Texture,
+}
 
 export class BasicMaterial extends Material {
 
-	// 在渲染器里，第一次编译的时候附值
-	static shader: Shader;
+	map: Texture;
 
-	static initShader() {
+	constructor(options?: IBasicMaterialOptions) {
+		super(options);
+
+		this.map = options?.map;
 
 	}
 
-	// get uniforms() {
-	// 	// @ts-ignore
-	// 	return this.constructor.shader.uniforms;
-	// }
-
-	map: Texture;
-
-	constructor() {
-		super();
-
-		const cls = this.constructor;
-		if (!cls["shader"]) cls["initShader"]();
+	initShader() {
 
 	}
 

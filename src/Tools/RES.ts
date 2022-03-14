@@ -4,8 +4,6 @@
  * Copyright © 2021 haiyoucuv. All rights reserved.
  */
 
-import { Texture } from "../Shader/Texture";
-
 export class RES {
 
 	/**
