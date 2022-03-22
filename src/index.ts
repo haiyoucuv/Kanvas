@@ -90,11 +90,12 @@ async function initScene() {
 			metallicMap: metallic1Texture,
 			roughnessMap: roughness1Texture,
 			aoMap: ao1Texture,
+			alpha: 0.5,
 		}),
 	);
 
-	mesh.position.set(-0.7, 0, 0);
-	mesh2.position.set(0.7, 0, 0);
+	mesh.position.set(0, 0, -1);
+	mesh2.position.set(0, 0, 1);
 
 	scene.add(mesh);
 	scene.add(mesh2);

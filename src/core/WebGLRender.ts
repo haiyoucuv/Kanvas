@@ -59,10 +59,14 @@ export class WebGLRender {
 
 		gl.enable(gl.CULL_FACE); // 剔除背面
 		gl.enable(gl.DEPTH_TEST);
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.depthFunc(gl.LEQUAL);
+		gl.depthMask(true);
+		gl.colorMask(true, true, true, true);
+		// gl.enable(gl.BLEND);
+		// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-		gl.clearColor(0, 0, 0, 1);
+
+		gl.clearColor(.2, .2, .2, 1);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		this.indexBuffer = gl.createBuffer();
@@ -83,9 +87,14 @@ export class WebGLRender {
 	/**
 	 * 获取渲染数据
 	 */
-	getRenderData(obj: Object3D, renderData = { mesh: [], light: [], camera: [], }) {
+	getRenderData(obj: Object3D, renderData = { alpha: [], mesh: [], light: [], camera: [], }) {
 		if (obj instanceof Mesh3D) {
-			renderData.mesh.push(obj);
+			// 透明和非透明分开
+			if (obj.material.alpha < 1) {
+				renderData.alpha.push(obj);
+			} else {
+				renderData.mesh.push(obj);
+			}
 		} else if (obj instanceof Camera) {
 			renderData.camera.push(obj);
 		} else if (obj instanceof Light) {
@@ -120,9 +129,25 @@ export class WebGLRender {
 
 		const renderData = this.getRenderData(scene);
 
-		for (let i = 0; i < renderData.mesh.length; i++) {
+		// 先渲染不透明物体
+		gl.disable(gl.BLEND);
+		const mlen = renderData.mesh.length;
+		for (let i = 0; i < mlen; i++) {
+			gl.depthMask(true);
+			gl.disable(gl.BLEND);
 			this.renderObj(renderData.mesh[i], camera, renderData.light);
 		}
+
+		// 再渲染带透明物体
+		gl.disable(gl.CULL_FACE);
+		gl.enable(gl.BLEND);
+		gl.blendFuncSeparate( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA );
+		// TODO 根据相机远近进行排序？
+		const alen = renderData.alpha.length;
+		for (let i = 0; i < alen; i++) {
+			this.renderObj(renderData.alpha[i], camera, renderData.light);
+		}
+
 
 	}
 
