@@ -4,7 +4,7 @@
  * Copyright © 2022 haiyoucuv. All rights reserved.
  */
 
-import { deg2Rad, euler, Euler, mat4, Matrix4, quat, Quaternion, rad2Deg, RotationOrders, v3, Vector3 } from "../math";
+import { degToRad, euler, Euler, mat4, Matrix4, quat, Quaternion, radToDeg, RotationOrders, v3, Vector3 } from "../math";
 
 export class Object3D {
 
@@ -169,29 +169,29 @@ export class Object3D {
 	}
 
 	get rotationX() {
-		return rad2Deg(this.rotation.x);
+		return radToDeg(this.rotation.x);
 	}
 
 	set rotationX(v: number) {
-		this.rotation.x = deg2Rad(v);
+		this.rotation.x = degToRad(v);
 		// this.rotation.x = v;
 	}
 
 	get rotationY() {
-		return rad2Deg(this.rotation.y);
+		return radToDeg(this.rotation.y);
 	}
 
 	set rotationY(v: number) {
-		this.rotation.y = deg2Rad(v);
+		this.rotation.y = degToRad(v);
 		// this.rotation.y = v;
 	}
 
 	get rotationZ() {
-		return rad2Deg(this.rotation.z);
+		return radToDeg(this.rotation.z);
 	}
 
 	set rotationZ(v: number) {
-		this.rotation.z = deg2Rad(v);
+		this.rotation.z = degToRad(v);
 		// this.rotation.z = v;
 	}
 

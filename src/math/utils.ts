@@ -15,7 +15,7 @@ export const PI2 = Math.PI * 2;
  */
 export const RAD_TO_DEG: number = 180 / PI;
 
-export function rad2Deg(rad) {
+export function radToDeg(rad) {
 	return rad * RAD_TO_DEG;
 }
 
@@ -28,7 +28,7 @@ export function rad2Deg(rad) {
  */
 export const DEG_TO_RAD: number = PI / 180;
 
-export function deg2Rad(deg) {
+export function degToRad(deg) {
 	return deg * DEG_TO_RAD;
 }
 
