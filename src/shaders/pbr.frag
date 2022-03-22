@@ -119,8 +119,11 @@ void main(){
     #ifdef USE_NORMAL_MAP
     vec3 N = getNormalFromMap();
     #else
-    vec3 N = normalize(v_normal);       // 在顶点着色器已经归一化
+    vec3 N = normalize(v_normal);// 在顶点着色器已经归一化
     #endif
+
+    // 使用透明，去掉面剔除的时候，应该吧内面的法线翻一下
+    N = N * (float(gl_FrontFacing) * 2.0 - 1.0);
 
     vec3 V = normalize(viewPos - v_pos);
 
@@ -177,5 +180,9 @@ void main(){
     // gamma correct
     res = pow(res, vec3(1.0/2.2));
 
+    //    if (gl_FrontFacing){
     gl_FragColor = vec4(res, alpha);
+    //    } else {
+    //        gl_FragColor = vec4(1.0,1.0,1.0, 1.0);
+    //    }
 }

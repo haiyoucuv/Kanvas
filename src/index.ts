@@ -115,34 +115,23 @@ function loop() {
 
 initScene();
 
-// import { GUI } from 'dat.gui';
-//
-// const param = {
-// 	metallic: 0.5,
-// 	roughness: 0.5,
-// 	ao: 1,
-// 	albedo: albedoColor.getHex(),
-// 	lightPos: {
-// 		x: lightPos.x,
-// 		y: lightPos.y,
-// 		z: lightPos.z,
-// 	}
-// }
-//
-// const gui = new GUI();
-// gui.add(param, "metallic", 0, 1, 0.01).onChange((e) => {
-// 	shader.uniforms.metallic = e;
-// });
-// gui.add(param, "roughness", 0, 1, 0.01).onChange((e) => {
-// 	shader.uniforms.roughness = e;
-// });
-// gui.add(param, "ao", 0, 3, 0.1).onChange((e) => {
-// 	shader.uniforms.ao = e;
-// });
-// gui.addColor(param, "albedo").onChange((e) => {
-// 	shader.uniforms.albedo = albedoColor.setHex(e).toArray();
-// });
-//
+import { GUI } from 'dat.gui';
+
+const param = {
+	rotationX: 0, rotationY: 0, rotationZ: 0
+}
+
+const gui = new GUI();
+gui.add(param, "rotationX", 0, 360, 1).onChange((e) => {
+	mesh2.rotationX = e;
+});
+gui.add(param, "rotationY", 0, 360, 1).onChange((e) => {
+	mesh2.rotationY = e;
+});
+gui.add(param, "rotationZ", 0, 360, 1).onChange((e) => {
+	mesh2.rotationZ = e;
+});
+
 // const lightPosGui = gui.addFolder("lightPos");
 // lightPosGui.add(param.lightPos, "x", -5, 5, 0.1).onChange((e) => {
 // 	lightPos.x = e;

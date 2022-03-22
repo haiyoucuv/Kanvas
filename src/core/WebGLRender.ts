@@ -60,8 +60,8 @@ export class WebGLRender {
 		gl.enable(gl.CULL_FACE); // 剔除背面
 		gl.enable(gl.DEPTH_TEST);
 		gl.depthFunc(gl.LEQUAL);
-		gl.depthMask(true);
-		gl.colorMask(true, true, true, true);
+		// gl.depthMask(true);
+		// gl.colorMask(true, true, true, true);
 		// gl.enable(gl.BLEND);
 		// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -133,21 +133,21 @@ export class WebGLRender {
 		gl.disable(gl.BLEND);
 		const mlen = renderData.mesh.length;
 		for (let i = 0; i < mlen; i++) {
-			gl.depthMask(true);
-			gl.disable(gl.BLEND);
 			this.renderObj(renderData.mesh[i], camera, renderData.light);
 		}
 
 		// 再渲染带透明物体
 		gl.disable(gl.CULL_FACE);
+		gl.depthMask(false);
 		gl.enable(gl.BLEND);
-		gl.blendFuncSeparate( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA );
+		gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 		// TODO 根据相机远近进行排序？
 		const alen = renderData.alpha.length;
 		for (let i = 0; i < alen; i++) {
 			this.renderObj(renderData.alpha[i], camera, renderData.light);
+			gl.depthMask(true);
 		}
-
+		// gl.depthMask(true);
 
 	}
 
