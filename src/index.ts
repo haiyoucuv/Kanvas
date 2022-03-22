@@ -94,8 +94,8 @@ async function initScene() {
 		}),
 	);
 
-	mesh.position.set(0, 0, -1);
-	mesh2.position.set(0, 0, 1);
+	mesh.position.set(0.3, 0, 0);
+	mesh2.position.set(0, 0, 0);
 
 	scene.add(mesh);
 	scene.add(mesh2);
