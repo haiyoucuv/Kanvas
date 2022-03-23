@@ -46,6 +46,7 @@ let mesh: Mesh3D;
 let mesh2: Mesh3D;
 let mesh3: Mesh3D;
 let pLight: PointLight;
+let uniform;
 
 async function initScene() {
 
@@ -89,7 +90,7 @@ async function initScene() {
 	);
 
 	// 自定义材质，加了个边缘光
-	const uniform = {
+	uniform = {
 		map: basecolor1Texture,
 		normalMap: normal1Texture,
 		metallicMap: metallic1Texture,
@@ -113,7 +114,7 @@ async function initScene() {
 			metallicMap: metallic1Texture,
 			roughnessMap: roughness1Texture,
 			aoMap: ao1Texture,
-			alpha: 0.5,
+			// alpha: 0.5,
 		}),
 	);
 
@@ -153,37 +154,27 @@ initScene();
 import { GUI } from 'dat.gui';
 
 const param = {
-	rotationX: 0, rotationY: 0, rotationZ: 0
+	rotationX: 0,
+	rimColor: {
+		r: 0,
+		g: 1,
+		b: 0,
+	},
+	rimPow: 3.2
 }
 
 const gui = new GUI();
-gui.add(camera, "rotationX", 0, 360, 1).onChange((e) => {
-	camera.rotationX = e;
-});
-gui.add(camera, "rotationY", 0, 360, 1).onChange((e) => {
-	camera.rotationY = e;
-});
-gui.add(camera, "rotationZ", 0, 360, 1).onChange((e) => {
-	camera.rotationZ = e;
+gui.add(param, "rimPow", 1, 5, 0.1).onChange((e) => {
+	uniform.rimPow = e;
 });
 
-gui.add(camera, "x", -1, 1, 0.1).onChange((e) => {
-	camera.x = e;
+const lightPosGui = gui.addFolder("边缘光颜色");
+lightPosGui.add(param.rimColor, "r", 0, 1, 0.1).onChange((e) => {
+	uniform.colorRim.r = e;
 });
-gui.add(camera, "y", -1, 1, 0.1).onChange((e) => {
-	camera.y = e;
+lightPosGui.add(param.rimColor, "g", 0, 1, 0.1).onChange((e) => {
+	uniform.colorRim.g = e;
 });
-gui.add(camera, "z", -4, 4, 0.01).onChange((e) => {
-	camera.z = e;
+lightPosGui.add(param.rimColor, "b", 0, 1, 0.1).onChange((e) => {
+	uniform.colorRim.b = e;
 });
-
-// const lightPosGui = gui.addFolder("lightPos");
-// lightPosGui.add(param.lightPos, "x", -5, 5, 0.1).onChange((e) => {
-// 	lightPos.x = e;
-// });
-// lightPosGui.add(param.lightPos, "y", -5, 5, 0.1).onChange((e) => {
-// 	lightPos.y = e;
-// });
-// lightPosGui.add(param.lightPos, "z", -5, 5, 0.1).onChange((e) => {
-// 	lightPos.z = e;
-// });
