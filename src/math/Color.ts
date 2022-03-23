@@ -169,7 +169,7 @@ export class Color {
     public g = 1;
     public b = 1;
 
-    constructor(r?: number | Color | string, g?, b?) {
+    constructor(r?: number | string, g?, b?) {
         if (r === void 0) return this;
         (g === void 0 && b === void 0) ? this.set(r) : this.setRGB(r, g, b);
     }

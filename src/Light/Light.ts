@@ -11,8 +11,9 @@ export class Light extends Object3D {
 
 	color: Color = color();
 
-	constructor() {
+	constructor(color: Color = new Color()) {
 		super();
+		this.color.copy(color);
 	}
 
 }
