@@ -90,7 +90,7 @@ async function initScene() {
 			metallicMap: metallic1Texture,
 			roughnessMap: roughness1Texture,
 			aoMap: ao1Texture,
-			alpha: 0.5,
+			// alpha: 0.5,
 		}),
 	);
 

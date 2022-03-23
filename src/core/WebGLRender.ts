@@ -7,14 +7,13 @@
 
 import { Camera } from "../Camera/Camera";
 import { Light } from "../Light/Light";
-import { color } from "../math";
 import Shader from "../Shader/Shader";
 import { Texture } from "../Shader/Texture";
 import { Mesh3D } from "./Mesh3D";
 import { Object3D } from "./Object3D";
 
 const defaultUniforms = [
-	"vp", "model", "alpha", "normalMat", "viewPos", "lightColor", "lightPos"
+	"vp", "matModel", "alpha", "matNormal", "posView", "colorLight", "posLight", "matView", "matProjection"
 ];
 
 export class WebGLRender {
@@ -176,25 +175,30 @@ export class WebGLRender {
 
 		/* 固定的 uniform */
 		// vp
-		const vp = camera.projectionMatrix.clone().multiply(camera.worldMatrix.clone().invert());
+		const matView = camera.worldMatrix.clone().invert();
+		const matProjection = camera.projectionMatrix.clone();
+		const vp = matProjection.multiply(matView);
 		shader.uniforms.vp = vp.toArray();
 
+		shader.uniforms.matView = matView.toArray();
+		shader.uniforms.matProjection = matView.toArray();
+
 		// 观察位置
-		shader.uniforms.viewPos = camera.position.toArray();
+		shader.uniforms.posView = camera.position.toArray();
 
 		// 模型世界矩阵
-		shader.uniforms.model = worldMatrix.toArray();
+		shader.uniforms.matModel = worldMatrix.toArray();
 
 		// 法线矩阵
-		const normalMat = worldMatrix.clone().invert().transpose();
-		shader.uniforms.normalMat = normalMat.toArray();
+		const matNormal = worldMatrix.clone().invert().transpose();
+		shader.uniforms.matNormal = matNormal.toArray();
 
 		shader.uniforms.alpha = material.alpha;
 
 		shader.uniforms.color = material.color.toArray();
 
-		shader.uniforms.lightPos = lights[0].position.toArray();
-		shader.uniforms.lightColor = lights[0].color.toArray();
+		shader.uniforms.posLight = lights[0].position.toArray();
+		shader.uniforms.colorLight = lights[0].color.toArray();
 
 		const cusUniforms = this.getCusUniforms(shader);
 
@@ -215,18 +219,6 @@ export class WebGLRender {
 				shader.uniforms[key] = material[key].toArray();
 			}
 		}
-
-		/* 根据材质来的 uniform */
-		// shader.uniforms.metallic = 0.5;
-		// shader.uniforms.roughness = 0.5;
-		// shader.uniforms.ao = 1.0;
-		// shader.uniforms.albedo = color(1.00, 0.86, 0.57).setHex(0x0095eb).toArray();
-		//
-		// shader.uniforms.map = 0;
-		// shader.uniforms.normalMap = 1;
-		// shader.uniforms.metallicMap = 2;
-		// shader.uniforms.roughnessMap = 3;
-
 
 		gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 	}

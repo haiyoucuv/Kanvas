@@ -9,10 +9,10 @@ varying vec2 v_uv;
 
 uniform float alpha;// 透明度
 
-uniform vec3 lightColor;// 光照颜色
-uniform vec3 lightPos;// 光照方向
+uniform vec3 colorLight;// 光照颜色
+uniform vec3 posLight;// 光照方向
 
-uniform vec3 viewPos;// 摄像机位置
+uniform vec3 posView;// 摄像机位置
 
 uniform vec3 color;// 颜色反照率
 uniform float metallic;// 金属性
@@ -125,7 +125,7 @@ void main(){
     // 使用透明，去掉面剔除的时候，应该吧内面的法线翻一下
     N = N * (float(gl_FrontFacing) * 2.0 - 1.0);
 
-    vec3 V = normalize(viewPos - v_pos);
+    vec3 V = normalize(posView - v_pos);// 视线反方向
 
     // 垂直反射率F0
     // 0.04为非金属近似值
@@ -137,11 +137,11 @@ void main(){
     vec3 Lo = vec3(0.0);
 
     // calculate per-light radiance
-    vec3 L = normalize(lightPos - v_pos);   // 计算光线方向
+    vec3 L = normalize(posLight - v_pos);// 计算光线方向
     vec3 H = normalize(V + L);
-    float distance = length(lightPos - v_pos);
+    float distance = length(posLight - v_pos);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = lightColor * attenuation;
+    vec3 radiance = colorLight * attenuation;
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);
@@ -179,6 +179,9 @@ void main(){
     res = res / (res + vec3(1.0));
     // gamma correct
     res = pow(res, vec3(1.0/2.2));
+
+    //    float rColor = 1.0 - dot(V, N);
+    //    res = mix(res, vec3(0.5, 0.0, 0.0), rColor);
 
     //    if (gl_FrontFacing){
     gl_FragColor = vec4(res, alpha);
