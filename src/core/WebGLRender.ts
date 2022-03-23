@@ -180,7 +180,7 @@ export class WebGLRender {
 		const vp = matProjection.multiply(matView);
 		shader.uniforms.vp = vp.toArray();
 
-		shader.uniforms.matView = matView.toArray();
+		shader.uniforms.matView = camera.worldMatrix.clone().toArray();
 		shader.uniforms.matProjection = matView.toArray();
 
 		// 观察位置

@@ -180,8 +180,9 @@ void main(){
     // gamma correct
     res = pow(res, vec3(1.0/2.2));
 
-    //    float rColor = 1.0 - dot(V, N);
-    //    res = mix(res, vec3(0.5, 0.0, 0.0), rColor);
+    // 搞个边缘光试试
+    float fRim = 1.0 - dot(N, V);
+    res = mix(res, vec3(0.0, 0.8, 0.0), pow(fRim, 3.0));
 
     //    if (gl_FrontFacing){
     gl_FragColor = vec4(res, alpha);

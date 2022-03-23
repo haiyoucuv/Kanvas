@@ -94,8 +94,8 @@ async function initScene() {
 		}),
 	);
 
-	mesh.position.set(0.3, 0, 0);
-	mesh2.position.set(0, 0, 0);
+	mesh.position.set(0.5, 0, 0);
+	mesh2.position.set(-0.5, 0, 0);
 
 	scene.add(mesh);
 	scene.add(mesh2);
@@ -107,8 +107,8 @@ async function initScene() {
 function loop() {
 	requestAnimationFrame(loop);
 
-	mesh.rotationY += 1;
-	mesh2.rotationY -= 1;
+	// mesh.rotationY += 1;
+	// mesh2.rotationY -= 1;
 
 	render.render(scene, camera);
 }
@@ -122,14 +122,24 @@ const param = {
 }
 
 const gui = new GUI();
-gui.add(param, "rotationX", 0, 360, 1).onChange((e) => {
-	mesh2.rotationX = e;
+gui.add(camera, "rotationX", 0, 360, 1).onChange((e) => {
+	camera.rotationX = e;
 });
-gui.add(param, "rotationY", 0, 360, 1).onChange((e) => {
-	mesh2.rotationY = e;
+gui.add(camera, "rotationY", 0, 360, 1).onChange((e) => {
+	camera.rotationY = e;
 });
-gui.add(param, "rotationZ", 0, 360, 1).onChange((e) => {
-	mesh2.rotationZ = e;
+gui.add(camera, "rotationZ", 0, 360, 1).onChange((e) => {
+	camera.rotationZ = e;
+});
+
+gui.add(camera, "x", -1, 1, 0.1).onChange((e) => {
+	camera.x = e;
+});
+gui.add(camera, "y", -1, 1, 0.1).onChange((e) => {
+	camera.y = e;
+});
+gui.add(camera, "z", -4, 4, 0.01).onChange((e) => {
+	camera.z = e;
 });
 
 // const lightPosGui = gui.addFolder("lightPos");

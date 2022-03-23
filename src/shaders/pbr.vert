@@ -14,6 +14,7 @@ varying vec3 v_normal;
 varying vec3 v_pos;
 varying vec2 v_uv;
 
+
 void main(){
 
     vec4 fragPos = matModel * vec4(pos, 1.0);// 顶点位置
