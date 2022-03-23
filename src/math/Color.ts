@@ -170,8 +170,8 @@ export class Color {
     public b = 1;
 
     constructor(r?: number | Color | string, g?, b?) {
-        if (!r) return this;
-        (!g && !b) ? this.set(r) : this.setRGB(r, g, b);
+        if (r === void 0) return this;
+        (g === void 0 && b === void 0) ? this.set(r) : this.setRGB(r, g, b);
     }
 
     set(value) {
