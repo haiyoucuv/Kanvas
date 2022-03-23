@@ -14,19 +14,13 @@ uniform vec3 posLight;// 光照方向
 
 uniform vec3 posView;// 摄像机位置
 
-uniform vec3 color;// 颜色反照率
-
-uniform float metallic;// 金属性
-uniform float roughness;// 粗糙度
-uniform float ao;
-
-// 贴图
-#ifdef USE_MAP
 uniform sampler2D map;
-#endif
 
-#ifdef USE_NORMAL_MAP
 uniform sampler2D normalMap;
+
+// 边缘光参数
+uniform vec3 colorRim;
+uniform float rimPow;
 
 vec3 getNormalFromMap() {
     vec3 tangentNormal = texture2D(normalMap, v_uv).rgb * 2.0 - 1.0;
@@ -43,19 +37,12 @@ vec3 getNormalFromMap() {
 
     return normalize(TBN * tangentNormal);
 }
-#endif
 
-#ifdef USE_METALLIC_MAP
 uniform sampler2D metallicMap;
-#endif
 
-#ifdef USE_ROUGHNESS_MAP
 uniform sampler2D roughnessMap;
-#endif
 
-#ifdef USE_AO_MAP
 uniform sampler2D aoMap;
-#endif
 
 const float PI = 3.14159265359;
 
@@ -98,30 +85,16 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 }
 
 void main(){
-    #ifdef USE_MAP
     vec3 baseColor = texture2D(map, v_uv).rgb;
     vec3 color = pow(baseColor, vec3(2.2));
-    #endif
 
-    #ifdef USE_METALLIC_MAP
     float metallic = texture2D(metallicMap, v_uv).r;
-    #endif
 
-    #ifdef USE_ROUGHNESS_MAP
     float roughness = texture2D(roughnessMap, v_uv).r;
-    #else
-    float roughness = clamp(roughness, 0.04, 1.0);// 处理粗糙度边界范围
-    #endif
 
-    #ifdef USE_AO_MAP
     float ao = texture2D(aoMap, v_uv).r;
-    #endif
 
-    #ifdef USE_NORMAL_MAP
     vec3 N = getNormalFromMap();
-    #else
-    vec3 N = normalize(v_normal);// 在顶点着色器已经归一化
-    #endif
 
     // 使用透明，去掉面剔除的时候，应该吧内面的法线翻一下
     N = N * (float(gl_FrontFacing) * 2.0 - 1.0);
@@ -181,5 +154,13 @@ void main(){
     // gamma correct
     res = pow(res, vec3(1.0/2.2));
 
+    // 搞个边缘光试试
+    float fRim = 1.0 - dot(N, V);
+    res = mix(res, colorRim, pow(fRim, rimPow));
+
+    //    if (gl_FrontFacing){
     gl_FragColor = vec4(res, alpha);
+    //    } else {
+    //        gl_FragColor = vec4(1.0,1.0,1.0, 1.0);
+    //    }
 }

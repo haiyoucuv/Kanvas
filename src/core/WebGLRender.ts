@@ -7,6 +7,7 @@
 
 import { Camera } from "../Camera/Camera";
 import { Light } from "../Light/Light";
+import { CustomMaterial } from "../Material/CustomMaterial";
 import Shader from "../Shader/Shader";
 import { Texture } from "../Shader/Texture";
 import { Mesh3D } from "./Mesh3D";
@@ -202,6 +203,7 @@ export class WebGLRender {
 
 		const cusUniforms = this.getCusUniforms(shader);
 
+		const uniformValFrom = (material instanceof CustomMaterial) ? material.uniform : material;
 		let curTextureUnit = 0;
 		for (let key in cusUniforms) {
 			const type = cusUniforms[key].type;
@@ -210,13 +212,13 @@ export class WebGLRender {
 				|| type === "int"
 				|| type === "bool"
 			) { // 浮点数直接附值
-				shader.uniforms[key] = material[key];
+				shader.uniforms[key] = uniformValFrom[key];
 			} else if (type === "sampler2D") {  // 贴图循环绑定
-				(material[key] as Texture).bind(gl[`TEXTURE${curTextureUnit}`]);
+				(uniformValFrom[key] as Texture).bind(gl[`TEXTURE${curTextureUnit}`]);
 				shader.uniforms[key] = curTextureUnit;
 				curTextureUnit++;
 			} else {    // 其他的应该直接toArray()就行吧
-				shader.uniforms[key] = material[key].toArray();
+				shader.uniforms[key] = uniformValFrom[key].toArray();
 			}
 		}
 
