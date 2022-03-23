@@ -36,9 +36,10 @@ export class WebGLRender {
 
 		const options = {
 			alpha: true,
+			stencil: true,  // 模版缓冲
+			depth: true,    // 深度缓冲
 			antialias: false,   // 抗锯齿
 			premultipliedAlpha: true,   // 预乘alpha
-			stencil: true,
 			preserveDrawingBuffer: true,
 		};
 
@@ -145,9 +146,9 @@ export class WebGLRender {
 		const alen = renderData.alpha.length;
 		for (let i = 0; i < alen; i++) {
 			this.renderObj(renderData.alpha[i], camera, renderData.light);
-			gl.depthMask(true);
+			// gl.depthMask(true);
 		}
-		// gl.depthMask(true);
+		gl.depthMask(true);
 
 	}
 
