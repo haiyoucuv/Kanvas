@@ -15,6 +15,9 @@ export interface IPbrMaterialOptions extends IBasicMaterialOptions {
 	metallicMap?: Texture,
 	roughnessMap?: Texture,
 	aoMap?: Texture,
+	metallic?: number,
+	roughness?: number,
+	ao?: number,
 }
 
 export class PbrMaterial extends BasicMaterial {
@@ -32,10 +35,19 @@ export class PbrMaterial extends BasicMaterial {
 
 		super(options);
 
-		this.normalMap = options?.normalMap;
-		this.metallicMap = options?.metallicMap;
-		this.roughnessMap = options?.roughnessMap;
-		this.aoMap = options?.aoMap;
+		const {
+			metallic = 0.5, roughness = 0.5, ao = 1.0,
+			normalMap, metallicMap, roughnessMap, aoMap
+		} = options;
+
+		this.metallic = metallic;
+		this.roughness = roughness;
+		this.ao = ao;
+
+		this.normalMap = normalMap;
+		this.metallicMap = metallicMap;
+		this.roughnessMap = roughnessMap;
+		this.aoMap = aoMap;
 
 	}
 

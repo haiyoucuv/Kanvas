@@ -64,7 +64,7 @@ export function createProgram(gl: WebGLRenderingContext, vertexShader: WebGLShad
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragShader);
 
-    gl.linkProgram(program)
+    gl.linkProgram(program);
 
     const success = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (!success) {
